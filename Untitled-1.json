@@ -1,0 +1,17 @@
+{
+    "uuid": "63bd678d-424a-4865-9d63-13f1b4f011a0",
+    "displayName": "Closure (api.php:21)",
+    "job": "Illuminate\\Queue\\CallQueuedHandler@call",
+    "maxTries": null,
+    "maxExceptions": null,
+    "failOnTimeout": false,
+    "backoff": null,
+    "timeout": null,
+    "retryUntil": null,
+    "data": {
+        "commandName": "Illuminate\\Queue\\CallQueuedClosure",
+        "command": "O:34:\"Illuminate\\Queue\\CallQueuedClosure\":1:{s:7:\"closure\";O:47:\"Laravel\\SerializableClosure\\SerializableClosure\":1:{s:12:\"serializable\";O:46:\"Laravel\\SerializableClosure\\Serializers\\Signed\":2:{s:12:\"serializable\";s:311:\"O:46:\"Laravel\\SerializableClosure\\Serializers\\Native\":5:{s:3:\"use\";a:0:{}s:8:\"function\";s:93:\"function () {\r\n \\Illuminate\\Support\\Facades\\Log::debug('Hello world dispatch');\r\n }\";s:5:\"scope\";s:37:\"Illuminate\\Routing\\RouteFileRegistrar\";s:4:\"this\";N;s:4:\"self\";s:32:\"00000000000000f90000000000000000\";}\";s:4:\"hash\";s:44:\"wjT9giKy4RI2cd5sIXbt7mSlwWY8Syv4rq5Rmiy3E2o=\";}}}"
+    },
+    "createdAt": 1756667413,
+    "delay": null
+}
