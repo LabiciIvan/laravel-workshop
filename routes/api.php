@@ -1,17 +1,16 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomClassesInteractionController;
+use App\Http\Controllers\PhoneVerificationController;
+use App\Http\Controllers\UserController;
 use App\Jobs\ReconcileAccount;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
-use Illuminate\Support\Facades\Redis;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Queue work.
+Route::resource('user', UserController::class);
 
 
 Route::prefix('class')->group(function () {
@@ -33,14 +32,11 @@ Route::get('/queue', function () {
 });
 
 
+// Redis work.
 Route::resource('article', ArticleController::class);
 
 
-Route::get('/redis', function () {
-
-    Redis::incr('test');
-
-    $test = Redis::get('test');
-
-    return $test;
+Route::prefix('phoneValidation')->group(function () {
+    Route::post('requestVerificationCode', [PhoneVerificationController::class, 'sendVerificationCode']);
+    Route::post('validateVerificationCode', [PhoneVerificationController::class, 'validateVerificationCode']);
 });
