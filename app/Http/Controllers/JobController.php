@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JobStoreRequest;
 use App\Models\Employer;
 use App\Models\Job;
+use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class JobController extends Controller {
 
@@ -20,25 +23,27 @@ class JobController extends Controller {
         return view('jobs.show', ['job' => $job]);
     }
 
-    public function store(Request $request) {
-        $data = [
-            'title'         => $request->input('name'),
-            'salary'        => $request->input('salary'),
-            'employer_id'   => $request->input('employer')
-        ];
+    public function store(JobStoreRequest $request) {
+        $mapped = $request->mappedAttributes();
+
+        Log::debug($request->input('tags'));
 
         $tags = [1, 2];
 
-        $job = Job::create($data);
+        $job = Job::create($mapped);
 
         $job->tags()->attach($tags);
 
-        return view('jobs.show', ['job' => $job]);
+        return redirect()->route('jobs.show', ['id' => $job->id]);
     }
 
     public function create() {
+        $tags = Tag::select(['id', 'name'])->get();
+
+        Log::debug($tags);
         $employers = Employer::select(['id', 'name'])->get();
-        return view('jobs.create', ['employers' => $employers]);
+
+        return view('jobs.create', ['employers' => $employers, 'tags' => $tags]);
     }
 
 }
