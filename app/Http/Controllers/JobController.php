@@ -7,8 +7,6 @@ use App\Http\Requests\JobStoreRequest;
 use App\Models\Employer;
 use App\Models\Job;
 use App\Models\Tag;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class JobController extends Controller {
 
@@ -26,8 +24,6 @@ class JobController extends Controller {
     public function store(JobStoreRequest $request) {
         $mapped = $request->mappedAttributes();
 
-        Log::debug($request->input('tags'));
-
         $tags = [1, 2];
 
         $job = Job::create($mapped);
@@ -40,10 +36,19 @@ class JobController extends Controller {
     public function create() {
         $tags = Tag::select(['id', 'name'])->get();
 
-        Log::debug($tags);
         $employers = Employer::select(['id', 'name'])->get();
 
         return view('jobs.create', ['employers' => $employers, 'tags' => $tags]);
+    }
+
+    public function edit(string $id) {
+        $job = Job::with('employer', 'tags')->where('id', $id)->first();
+
+        $jobTagIds = $job->tags->pluck('id');
+
+        $tags = Tag::whereNotIn('id', $jobTagIds)->get();
+
+        return view('jobs.edit', ['job' => $job, 'availableTags' => $tags]);
     }
 
 }
