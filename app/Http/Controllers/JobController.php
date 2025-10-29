@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JobStoreRequest;
 use App\Http\Requests\JobUpdateRequest;
+use App\Jobs\TranslateJob;
+use App\Mail\JobPosted;
 use App\Models\Employer;
 use App\Models\Job;
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class JobController extends Controller {
 
@@ -33,6 +38,13 @@ class JobController extends Controller {
 
         $job->tags()->attach($tags);
 
+
+        // dd($job->employer->user->email);
+
+        // Mail::to($job->employer->user->email)->send(new JobPosted($job));
+
+        TranslateJob::dispatch($job)->delay(5);
+
         return redirect()->route('jobs.show', ['id' => $job->id]);
     }
 
@@ -44,12 +56,17 @@ class JobController extends Controller {
         return view('jobs.create', ['employers' => $employers, 'tags' => $tags]);
     }
 
-    public function edit(string $id) {
-        $job = Job::with('employer', 'tags')->where('id', $id)->first();
+    public function edit(Job $job) {
+        // Auth::user()->can('edit-job', $job); // <- Authorization on user level using a defined gate.
+
+        // Gate::authorize('edit-job', $job); // <- Authorization on gate level, calling the defined gate rule.
+
+        // There is prefered way by using middlewares on route leve, check job edit route.
 
         $jobTagIds = $job->tags->pluck('id');
 
         $tags = Tag::whereNotIn('id', $jobTagIds)->get();
+
 
         return view('jobs.edit', ['job' => $job, 'availableTags' => $tags]);
     }
@@ -58,7 +75,7 @@ class JobController extends Controller {
 
         $attributes = $request->mappedAttributes();
         $tags       = $request->otherAttributes('tags');
-        $job        = Job::find($attributes['id'])->first();
+        $job        = Job::findOrFail($attributes['id']);
 
         $job->update($attributes);
 
@@ -67,7 +84,7 @@ class JobController extends Controller {
             $job->tags()->sync($tags);
         }
 
-        return redirect()->route('jobs.show', ['job' => $job, 'id' => $job['id']]);
+        return redirect()->route('jobs.show', ['id' => $job['id']]);
     }
 
 
