@@ -19,10 +19,6 @@ class BaseJob extends FormRequest
         foreach ($this->attributesData as $key => $column) {
 
             if ($column === self::OTHER_ATTRIBUTES) {
-                Log::debug('----other attributes------');
-                Log::debug($column);
-                Log::debug($this->input($key));
-                Log::debug('----other attributes------');
                 // Place other attributes in a different array for easy access.
                 $this->otherAttributes[$key] = $this->input($key);
                 unset($this->attributesData[$key]);

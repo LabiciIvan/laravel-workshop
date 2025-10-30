@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Model::preventLazyLoading();
 
-        Gate::define('edit-job', function (User $user, Job $job) {
-            return $job->employer->user_id === $user->id;
-        });
+        // Gate::define('edit-job', function (User $user, Job $job) {   // <- Defined a Policy instead of Gate, to isolate permissions for each Model
+        //     return $job->employer->user_id === $user->id;
+        // });
     }
 }
